@@ -1,49 +1,51 @@
+"""Load and save contacts as JSON."""
+
 import json
 import os
+import tempfile
+
 from contact import Contact
+
+# Store the file next to the program so it works from any working directory.
+CONTACTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contacts.json")
 
 
 def load_contacts():
-    if os.path.exists("contacts.json"):
-        with open("contacts.json", "r") as f:
-            try:
-                data = json.load(f)
+    """Return the saved contacts, or an empty list if none/unreadable."""
+    if not os.path.exists(CONTACTS_FILE):
+        return []
 
-                contacts = []
+    try:
+        with open(CONTACTS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        print("Warning: could not read contacts file; starting empty.")
+        return []
 
-                for item in data:
-                    contact = Contact(
-                        name=item["Name"],
-                        phone_number=item["Phone Number"],
-                        email=item["Email"],
-                        address=item["Address"],
-                        birthday=item["Birthday"],
-                        notes=item["Notes"],
-                        favorite=item["Favorite"]
-                    )
-                    contacts.append(contact)
-
-                return contacts
-
-            except json.JSONDecodeError:
-                return []
-
-    return []
+    contacts = []
+    for item in data:
+        try:
+            contacts.append(Contact.from_dict(item))
+        except (KeyError, ValueError, TypeError, AttributeError) as error:
+            # Skip a bad record rather than losing the whole file.
+            print(f"Warning: skipped an invalid saved contact ({error!r}).")
+    return contacts
 
 
 def save_contacts(contacts):
-    data = [
-        {
-            "Name": contact.name,
-            "Phone Number": contact.phone_number,
-            "Email": contact.email,
-            "Address": contact.address,
-            "Birthday": contact.birthday,
-            "Notes": contact.notes,
-            "Favorite": contact.favorite,
-        }
-        for contact in contacts
-    ]
+    """Write contacts to disk.
 
-    with open("contacts.json", "w") as f:
-        json.dump(data, f, indent=4)
+    Writes to a temp file first and then swaps it in, so a crash mid-write
+    can't corrupt the existing contacts file.
+    """
+    data = [contact.to_dict() for contact in contacts]
+    directory = os.path.dirname(CONTACTS_FILE)
+    fd, temp_path = tempfile.mkstemp(dir=directory, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        os.replace(temp_path, CONTACTS_FILE)
+    except Exception:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise

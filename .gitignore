@@ -1,3 +1,14 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+.venv/
+venv/
+
+# Personal data: don't commit real contacts
 contacts.json
+*.tmp
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

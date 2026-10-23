@@ -1,25 +1,28 @@
 # 📒 Contact Manager
 
-A simple command-line Contact Manager built with Python. It allows users to store, view, manage, and save contacts using object-oriented programming and JSON file storage.
+A simple command-line Contact Manager built with Python. It stores, edits, searches and manages contacts using object-oriented programming and JSON file storage.
 
 ## Features
 
-- Add a new contact
+- Add a new contact (name, phone, email, address, birthday, notes)
+- Update an existing contact (blank input keeps the current value)
 - View all contacts
+- Search contacts by name
 - Mark or unmark contacts as favorites
 - Delete contacts
-- Save contacts to a JSON file
-- Automatically load saved contacts when the program starts
+- Phone number and email validation with re-prompting on bad input
+- Contacts are saved automatically after every change and loaded on startup
 
 ## Project Structure
 
 ```
 contact_manager/
-│── main.py              # Runs the application
-│── contact.py           # Contact class
-│── contact_manager.py   # Manages contacts
-│── storage.py           # Handles loading and saving
-│── contacts.json        # Stores contacts
+│── main.py              # Command-line menu and user input
+│── contact.py           # Contact class and field validation
+│── contact_manager.py   # Add / update / delete / search logic
+│── storage.py           # Loading and saving contacts.json
+│── contacts.json        # Created automatically on first save
+│── .gitignore
 │── README.md
 ```
 
@@ -29,21 +32,9 @@ contact_manager/
 
 ## How to Run
 
-1. Clone the repository.
-
 ```bash
 git clone <repository-url>
-```
-
-2. Navigate to the project folder.
-
-```bash
 cd contact_manager
-```
-
-3. Run the program.
-
-```bash
 python main.py
 ```
 
@@ -51,34 +42,31 @@ python main.py
 
 ```
 ===== Contact Manager =====
-
 1. Add Contact
-2. View Contacts
-3. Toggle Favorite
-4. Delete Contact
-5. Save and Exit
-
+2. Update Contact
+3. View Contacts
+4. Search Contacts
+5. Toggle Favorite
+6. Delete Contact
+7. Save and Exit
 Choose:
 ```
 
 ## Concepts Practiced
 
-- Classes and Objects
-- Object-Oriented Programming (OOP)
-- Lists
-- File Handling
-- JSON Serialization
-- Exception Handling
-- Functions
-- Modular Programming
+- Classes and objects (OOP)
+- Separation of concerns (UI / logic / storage)
+- Lists and dictionaries
+- File handling and JSON serialization
+- Regular expressions and input validation
+- Exception handling
 
 ## Future Improvements
 
-- Edit existing contacts
-- Search contacts by name
 - Sort contacts alphabetically
 - Filter favorite contacts
-- Validate phone numbers and emails
+- Validate birthday format
+- Detect duplicate contacts
 
 ## Author
 
