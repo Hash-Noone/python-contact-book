@@ -121,7 +121,7 @@ There is no automated test suite yet. A quick smoke test pipes menu choices into
 printf '1\nAlice\n5551234567\nalice@example.com\n\n\n\n\n3\n7\n' | python3 main.py
 ```
 
-This writes a real `contacts.json`; delete it afterwards to reset.
+This saves a sample contact into the real `contacts.json`. If you already have saved contacts, back up `contacts.json` first and restore it afterwards (or run the test in a fresh clone). In a fresh clone, delete `contacts.json` afterwards to reset.
 
 ## Concepts Practiced
 
