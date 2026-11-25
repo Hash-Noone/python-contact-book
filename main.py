@@ -1,4 +1,9 @@
-"""Command-line interface for the Contact Manager."""
+"""Command-line interface for the Contact Manager.
+
+This is the only module that talks to the user (input/print). Each menu
+action collects input, asks ContactManager to make the change, and then
+saves the whole list to disk straight away.
+"""
 
 from contact import (
     Contact,
@@ -32,6 +37,7 @@ def prompt_yes_no(label, default=False):
     """Ask a y/n question; blank or anything else keeps `default`."""
     hint = "y" if default else "n"
     answer = input(f"{label} (y/n) [{hint}]: ").strip().lower()
+    # Anything other than an explicit y or n keeps the default.
     return default if answer not in ("y", "n") else answer == "y"
 
 
@@ -67,6 +73,7 @@ def show_contacts(contacts):
 # --- Menu actions -----------------------------------------------------------
 
 def add_contact(manager):
+    """Prompt for every field, then add and save the new contact."""
     name = prompt_valid("Enter contact name", validate_name)
     phone = prompt_valid("Enter phone number", validate_phone)
     email = prompt_valid("Enter email", validate_email)
@@ -80,10 +87,13 @@ def add_contact(manager):
 
 
 def update_contact(manager):
+    """Pick a contact and edit it; blank answers keep the current values."""
     contact = prompt_index(manager)
     if contact is None:
         return
     print("Enter new details (leave blank to keep the current value):")
+    # Name, phone and email are re-prompted until valid, so update_contact
+    # below only receives values that will pass Contact validation.
     manager.update_contact(
         contact,
         name=prompt_valid("Name", validate_name, contact.name),
@@ -99,6 +109,7 @@ def update_contact(manager):
 
 
 def view_contacts(manager):
+    """Print every saved contact."""
     if not manager.contacts:
         print("No contacts available.")
         return
@@ -107,11 +118,13 @@ def view_contacts(manager):
 
 
 def search_contacts(manager):
+    """Print contacts whose name contains the search text."""
     query = input("Enter name to search: ")
     show_contacts(manager.search(query))
 
 
 def toggle_favorite(manager):
+    """Pick a contact and flip its favorite flag."""
     contact = prompt_index(manager)
     if contact is None:
         return
@@ -121,6 +134,7 @@ def toggle_favorite(manager):
 
 
 def delete_contact(manager):
+    """Pick a contact and remove it."""
     contact = prompt_index(manager)
     if contact is None:
         return
@@ -141,6 +155,8 @@ MENU = """
 6. Delete Contact
 7. Save and Exit"""
 
+# Maps each menu choice to its handler. "7" (save and exit) is handled in
+# main() because it ends the loop.
 ACTIONS = {
     "1": add_contact,
     "2": update_contact,
@@ -152,6 +168,7 @@ ACTIONS = {
 
 
 def main():
+    """Load saved contacts and run the menu until the user exits."""
     manager = ContactManager(load_contacts())
 
     while True:

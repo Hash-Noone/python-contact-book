@@ -1,4 +1,8 @@
-"""Contact model and field validation."""
+"""Contact model and field validation.
+
+A Contact always holds a valid name, phone number and email: the validators
+below run in __init__, so an invalid Contact can never be created.
+"""
 
 import re
 
@@ -37,6 +41,7 @@ def validate_phone(phone_number):
             "Phone number may contain only digits, spaces, parentheses, "
             "hyphens, and a leading '+'."
         )
+    # Count only the digits, ignoring formatting characters.
     digit_count = len(re.sub(r"\D", "", phone_number))
     if not 8 <= digit_count <= 15:
         raise ValueError("Phone number must contain between 8 and 15 digits.")
@@ -83,7 +88,11 @@ class Contact:
         self.favorite = not self.favorite
 
     def to_dict(self):
-        """Serialize to a dict (used by storage.py)."""
+        """Serialize to a dict (used by storage.py).
+
+        The keys are the ones written to contacts.json; from_dict must read
+        the same keys, so change both together.
+        """
         return {
             "Name": self.name,
             "Phone Number": self.phone_number,
@@ -108,5 +117,6 @@ class Contact:
         )
 
     def __str__(self):
+        # Favorites are marked with a star in every contact listing.
         star = "★ " if self.favorite else ""
         return f"{star}{self.name} (Phone: {self.phone_number}, Email: {self.email})"

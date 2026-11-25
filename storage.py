@@ -23,6 +23,7 @@ def load_contacts():
         return []
 
     contacts = []
+    # Rebuild each Contact; from_dict re-runs validation on the saved values.
     for item in data:
         try:
             contacts.append(Contact.from_dict(item))
@@ -40,6 +41,7 @@ def save_contacts(contacts):
     """
     data = [contact.to_dict() for contact in contacts]
     directory = os.path.dirname(CONTACTS_FILE)
+    # The temp file must be in the same directory so os.replace is atomic.
     fd, temp_path = tempfile.mkstemp(dir=directory, suffix=".tmp")
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
