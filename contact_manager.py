@@ -7,6 +7,7 @@ class ContactManager:
     """Holds the contact list and provides add/update/delete/search."""
 
     def __init__(self, contacts=None):
+        # A new list per manager; a shared default list would leak between instances.
         self.contacts = contacts if contacts is not None else []
 
     def add_contact(self, contact):
@@ -51,7 +52,11 @@ class ContactManager:
         return [c for c in self.contacts if query in c.name.lower()]
 
     def _index_of(self, contact):
-        """Find a contact by identity; raise if it isn't in the list."""
+        """Find a contact by identity; raise if it isn't in the list.
+
+        Matching on the object itself (``is``) rather than on its fields means
+        two contacts with identical details are never confused.
+        """
         for i, existing in enumerate(self.contacts):
             if existing is contact:
                 return i
