@@ -102,6 +102,8 @@ python-contact-book/
 ├── contact.py           # Contact class and the name/phone/email validators
 ├── contact_manager.py   # ContactManager: add / update / delete / search / toggle favorite
 ├── storage.py           # Loading and saving contacts.json
+├── tests/               # Validator and JSON storage tests
+├── requirements-dev.txt # Test dependencies
 ├── contacts.json        # Created automatically on first save (git-ignored)
 ├── .gitignore
 └── README.md
@@ -115,13 +117,14 @@ How the pieces fit together:
 
 ## Testing
 
-There is no automated test suite yet. A quick smoke test pipes menu choices into the program (add a contact, view contacts, save and exit):
+Install the test dependencies and run pytest from the repository root:
 
 ```bash
-printf '1\nAlice\n5551234567\nalice@example.com\n\n\n\n\n3\n7\n' | python3 main.py
+python3 -m pip install -r requirements-dev.txt
+python3 -m pytest -q -rx
 ```
 
-This saves a sample contact into the real `contacts.json`. If you already have saved contacts, back up `contacts.json` first and restore it afterwards (or run the test in a fresh clone). In a fresh clone, delete `contacts.json` afterwards to reset.
+Storage tests use temporary files and never touch your real `contacts.json`. GitHub Actions runs the suite on every push and pull request. The `-rx` option lists known bugs marked as expected failures.
 
 ## Concepts Practiced
 
@@ -138,7 +141,6 @@ This saves a sample contact into the real `contacts.json`. If you already have s
 - Filter favorite contacts
 - Validate birthday format
 - Detect duplicate contacts
-- Add automated tests
 
 ## Author
 
